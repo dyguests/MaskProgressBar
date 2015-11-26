@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MaskProgressBar">
+        <attr name="maskColor" format="color"/>
+        <attr name="maxValue" format="integer"/>
+    </declare-styleable>
+</resources>
