@@ -156,8 +156,6 @@ public class MaskProgressBar extends View {
 
     @Override
     public void invalidate() {
-        refreshMaskBitmap();
-        refreshHollowBitmap();
         super.invalidate();
     }
 
@@ -173,6 +171,8 @@ public class MaskProgressBar extends View {
             mProgress = progress % 1.0f;
             if (mProgress == 0) mProgress = 1;
         }
+
+        refreshHollowBitmap();
         invalidate();
     }
 

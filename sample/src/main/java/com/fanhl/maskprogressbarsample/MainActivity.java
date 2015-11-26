@@ -62,9 +62,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void animate() {
         maskProgressBar.setProgress(0);
-        
+
         if (mProgressBarAnimator != null) mProgressBarAnimator.cancel();
-        animate(maskProgressBar, null, 1f, 1000);
+        animate(maskProgressBar, null, 1f, 3000);
     }
 
     private void animate(final MaskProgressBar progressBar, final Animator.AnimatorListener listener,
