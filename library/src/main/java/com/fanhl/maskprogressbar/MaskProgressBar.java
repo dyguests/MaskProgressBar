@@ -2,10 +2,13 @@ package com.fanhl.maskprogressbar;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
+import android.support.annotation.NonNull;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
@@ -27,7 +30,10 @@ public class MaskProgressBar extends View {
     private int mMaskColor;
     private int mMaxValue;
 
-    private float mProgress = 0.3f;
+    private float mProgress = 0.8f;
+
+    private Bitmap mMaskBitmap;
+    private Bitmap mHollowBitmap;
 
     public MaskProgressBar(Context context) {
         super(context);
@@ -59,6 +65,7 @@ public class MaskProgressBar extends View {
         a.recycle();
 
         mCirclePaint = new Paint();
+        mCirclePaint.setStyle(Paint.Style.STROKE);
         mCirclePaint.setAntiAlias(true);
 
         mTextPaint = new TextPaint();
@@ -76,10 +83,54 @@ public class MaskProgressBar extends View {
 
         mContentWidth = widthSize - getPaddingLeft() - getPaddingRight();
         mContentHeight = heightSize - getPaddingTop() - getPaddingBottom();
+
+        refreshMaskBitmap();
+        refreshHollowBitmap();
+    }
+
+    private void refreshMaskBitmap() {
+        //遮罩区域
+        mMaskBitmap = Bitmap.createBitmap(mContentWidth, mContentHeight, Bitmap.Config.ARGB_8888);
+        Canvas maskCanvas = new Canvas(mMaskBitmap);
+        maskCanvas.drawColor(mMaskColor);
+    }
+
+    private void refreshHollowBitmap() {
+        float radius = Math.min(mContentWidth, mContentHeight) / 2 / 2;
+
+        mCirclePaint.setStrokeWidth(radius / 8);
+
+        int centerX = mContentWidth / 2;
+        int centerY = mContentHeight / 2;
+
+        RectF mCircleBounds = new RectF(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
+
+        //镂空区域
+        mHollowBitmap = Bitmap.createBitmap(mContentWidth, mContentHeight, Bitmap.Config.ARGB_8888);
+        Canvas hollowCanvas = new Canvas(mHollowBitmap);
+        hollowCanvas.drawArc(mCircleBounds, -90, getCurrentRotation(), false, mCirclePaint);
+        hollowCanvas.drawText(getProgressBarText(), centerX, centerY, mTextPaint);
+
+        hollowCanvas.drawBitmap(mMaskBitmap, 0, 0, mHollowPaint);
+    }
+
+    @NonNull
+    private String getProgressBarText() {
+        return "吃了没";// FIXME: 15/11/25
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        canvas.drawBitmap(mHollowBitmap, getPaddingLeft(), getPaddingTop(), null);
+    }
+
+    /**
+     * Gets the current rotation.
+     *
+     * @return the current rotation
+     */
+    private float getCurrentRotation() {
+        return 360 * mProgress;
     }
 }
