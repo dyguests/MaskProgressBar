@@ -36,8 +36,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        ProgressBar a = null;
-//        a.setProgress(20);
+        ProgressBar a = null;
+        if (a != null) {
+            a.setProgress(20);
+        }
     }
 
     @Override
