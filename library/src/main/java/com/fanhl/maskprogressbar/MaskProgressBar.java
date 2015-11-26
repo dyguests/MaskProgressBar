@@ -154,16 +154,26 @@ public class MaskProgressBar extends View {
         return 360 * mProgress;
     }
 
-    public void setProgress(float progress) {
-        if (progress == mProgress) return;
-        mProgress = progress % 1.0f;
-        invalidate();
-    }
-
     @Override
     public void invalidate() {
+        refreshMaskBitmap();
         refreshHollowBitmap();
         super.invalidate();
+    }
+
+    public float getProgress() {
+        return mProgress;
+    }
+
+    public void setProgress(float progress) {
+        if (progress == mProgress) return;
+        if (progress <= 1) {
+            mProgress = progress;
+        } else {
+            mProgress = progress % 1.0f;
+            if (mProgress == 0) mProgress = 1;
+        }
+        invalidate();
     }
 
     public void setOnMaskProgressBarListener(OnMaskProgressBarListener onMaskProgressBarListener) {

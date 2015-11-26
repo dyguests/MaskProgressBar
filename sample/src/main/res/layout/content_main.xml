@@ -18,8 +18,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/head"/>
+        android:src="@drawable/head"
+        tools:ignore="ContentDescription"/>
+
     <com.fanhl.maskprogressbar.MaskProgressBar
+        android:id="@+id/maskProgressBar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:maskColor="#8fff0073"/>
