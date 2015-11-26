@@ -1,11 +1,34 @@
 apply plugin: 'com.android.library'
 
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'maskprogressbar'
+
+    publishedGroupId = 'com.fanhl.maskprogressbar'
+    libraryName = 'maskprogressbar'
+    artifact = 'maskprogressbar'
+
+    libraryDescription = 'An annular mask progressBar. '
+
+    siteUrl = 'https://github.com/dyguests/MaskProgressBar'
+    gitUrl = 'https://github.com/dyguests/MaskProgressBar.git'
+
+    libraryVersion = '0.1.0'
+
+    developerId = 'dyguests'
+    developerName = 'Fan Honglin'
+    developerEmail = 'dyguests@qq.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-//        applicationId "com.fanhl.maskprogressbar"
         minSdkVersion 8
         targetSdkVersion 23
         versionCode 1
@@ -23,4 +46,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
+    compile 'com.github.dcendents:android-maven-gradle-plugin:1.3'
 }
