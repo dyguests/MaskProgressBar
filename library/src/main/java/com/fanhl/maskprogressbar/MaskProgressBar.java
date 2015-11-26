@@ -103,6 +103,8 @@ public class MaskProgressBar extends View {
 
         refreshMaskBitmap();
 
+        mHollowBitmap = Bitmap.createBitmap(mContentWidth, mContentHeight, Bitmap.Config.ARGB_8888);
+        hollowCanvas = new Canvas(mHollowBitmap);
         refreshHollowBitmap();
     }
 
@@ -120,8 +122,7 @@ public class MaskProgressBar extends View {
         int centerX = mContentWidth / 2;
         int centerY = mContentHeight / 2;
 
-        mHollowBitmap = Bitmap.createBitmap(mContentWidth, mContentHeight, Bitmap.Config.ARGB_8888);
-        hollowCanvas = new Canvas(mHollowBitmap);
+        hollowCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
 
         RectF mCircleBounds = new RectF(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
         mCirclePaint.setStrokeWidth(radius / 8);
