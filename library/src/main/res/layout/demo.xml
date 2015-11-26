@@ -4,9 +4,10 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:background="#00ff8c">
+
     <com.fanhl.maskprogressbar.MaskProgressBar
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="20dp"
+        android:padding="40dp"
         app:maskColor="#ff0000"/>
 </FrameLayout>

@@ -13,16 +13,24 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
+import java.text.NumberFormat;
+
 /**
  * Created by fanhl on 15/11/26.
  */
 public class MaskProgressBar extends View {
     public static final int DEFAULT_MAX_VALUE  = 100;
-    public static final int DEFAULT_MASK_COLOR = 0x6FFFFFFF;
+    public static final int DEFAULT_MASK_COLOR = 0x6FFF0000;
+
+    //用于format成 99%
+    private NumberFormat nt;
 
     private Paint     mCirclePaint;
     private TextPaint mTextPaint;
     private Paint     mHollowPaint;
+
+    private Bitmap mMaskBitmap;
+    private Bitmap mHollowBitmap;
 
     private int mContentWidth;
     private int mContentHeight;
@@ -30,10 +38,9 @@ public class MaskProgressBar extends View {
     private int mMaskColor;
     private int mMaxValue;
 
-    private float mProgress = 0.8f;
+    private float mProgress = 0f;
 
-    private Bitmap mMaskBitmap;
-    private Bitmap mHollowBitmap;
+    OnMaskProgressBarListener onMaskProgressBarListener;
 
     public MaskProgressBar(Context context) {
         super(context);
@@ -69,9 +76,17 @@ public class MaskProgressBar extends View {
         mCirclePaint.setAntiAlias(true);
 
         mTextPaint = new TextPaint();
+        mTextPaint.setTextAlign(Paint.Align.CENTER);
 
         mHollowPaint = new Paint();
         mHollowPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OUT));
+
+        //获取格式化对象
+        nt = NumberFormat.getPercentInstance();
+
+        if (isInEditMode()) {
+            mProgress = 0.7f;
+        }
     }
 
     @Override
@@ -88,35 +103,40 @@ public class MaskProgressBar extends View {
         refreshHollowBitmap();
     }
 
+    //遮罩区域
     private void refreshMaskBitmap() {
-        //遮罩区域
         mMaskBitmap = Bitmap.createBitmap(mContentWidth, mContentHeight, Bitmap.Config.ARGB_8888);
         Canvas maskCanvas = new Canvas(mMaskBitmap);
         maskCanvas.drawColor(mMaskColor);
     }
 
+    //镂空区域
     private void refreshHollowBitmap() {
         float radius = Math.min(mContentWidth, mContentHeight) / 2 / 2;
-
-        mCirclePaint.setStrokeWidth(radius / 8);
 
         int centerX = mContentWidth / 2;
         int centerY = mContentHeight / 2;
 
-        RectF mCircleBounds = new RectF(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
 
-        //镂空区域
         mHollowBitmap = Bitmap.createBitmap(mContentWidth, mContentHeight, Bitmap.Config.ARGB_8888);
         Canvas hollowCanvas = new Canvas(mHollowBitmap);
+
+        RectF mCircleBounds = new RectF(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
+        mCirclePaint.setStrokeWidth(radius / 8);
         hollowCanvas.drawArc(mCircleBounds, -90, getCurrentRotation(), false, mCirclePaint);
-        hollowCanvas.drawText(getProgressBarText(), centerX, centerY, mTextPaint);
+
+        mTextPaint.setTextSize(radius / 2);
+        hollowCanvas.drawText(getProgressBarText(), centerX, centerY - ((mTextPaint.descent() + mTextPaint.ascent()) / 2), mTextPaint);
 
         hollowCanvas.drawBitmap(mMaskBitmap, 0, 0, mHollowPaint);
     }
 
     @NonNull
     private String getProgressBarText() {
-        return "吃了没";// FIXME: 15/11/25
+        if (onMaskProgressBarListener != null) {
+            return onMaskProgressBarListener.getProgressBarText(mProgress);
+        }
+        return nt.format(mProgress);
     }
 
     @Override
@@ -132,5 +152,25 @@ public class MaskProgressBar extends View {
      */
     private float getCurrentRotation() {
         return 360 * mProgress;
+    }
+
+    public void setProgress(float progress) {
+        if (progress == mProgress) return;
+        mProgress = progress % 1.0f;
+        invalidate();
+    }
+
+    @Override
+    public void invalidate() {
+        refreshHollowBitmap();
+        super.invalidate();
+    }
+
+    public void setOnMaskProgressBarListener(OnMaskProgressBarListener onMaskProgressBarListener) {
+        this.onMaskProgressBarListener = onMaskProgressBarListener;
+    }
+
+    public interface OnMaskProgressBarListener {
+        String getProgressBarText(float progress);
     }
 }
