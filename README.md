@@ -4,4 +4,6 @@
 
 This is an annular mask progressBar.
 
+![sample](/graphics/device-2015-11-26-163943.png)
+
 have fun.
